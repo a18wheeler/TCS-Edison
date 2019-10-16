@@ -1,0 +1,149 @@
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class DTHServlet
+ */
+@WebServlet("/DTHServlet")
+public class DTHServlet extends HttpServlet {
+	static Connection conn;
+	static PreparedStatement ps;
+	String driverName="oracle.jdbc.driver.OracleDriver";
+	String DB_URL="jdbc:oracle:thin:@localhost:1521:xe";
+	String DB_USER="system";
+	String DB_PASS="12345";
+	ResultSet rs;
+	String query="insert into stb values(?,?,?,?,?,?,?,?,?,?,?)";
+	String query1="select * from stb where boxid=?";
+	String query2="select * from stb";
+	String query3="delete from stb where boxid=?";
+	
+   	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+   		try {
+			Class.forName(driverName);
+			conn=DriverManager.getConnection(DB_URL,DB_USER,DB_PASS);
+			PrintWriter out=response.getWriter();
+			String hidden1=request.getParameter("register");
+			//int deleteid=Integer.parseInt(request.getParameter("delete"));
+			//Insertion operation
+			if(hidden1.equals("create"))
+			{
+				String id=request.getParameter("id");
+				String type=request.getParameter("stype");
+				float length=Float.parseFloat(request.getParameter("length"));
+				float breadth=Float.parseFloat(request.getParameter("breadth"));
+				float width=Float.parseFloat(request.getParameter("width"));
+				float price=Float.parseFloat(request.getParameter("price"));
+				float icharge=Float.parseFloat(request.getParameter("icharge"));
+				float ucharge=Float.parseFloat(request.getParameter("ucharge"));
+				float discount=Float.parseFloat(request.getParameter("discount"));
+				String btype=request.getParameter("btype");
+				float refund=Float.parseFloat(request.getParameter("deposit"));
+				ps = conn.prepareStatement(query);
+				ps.setString(1, id);
+				ps.setString(2, type);
+				ps.setFloat(3, length);
+				ps.setFloat(4, breadth);
+				ps.setFloat(5, width);
+				ps.setFloat(6, price);
+				ps.setFloat(7, icharge);
+				ps.setFloat(8, ucharge);
+				ps.setFloat(9, discount);
+				ps.setString(10, btype);
+				ps.setFloat(11, refund);
+				int i=ps.executeUpdate();
+				System.out.println(i+" row updated");
+			}
+			//Selecting by boxid
+			else if(hidden1.equals("select"))
+			{
+				int id=Integer.parseInt(request.getParameter("id"));
+				ps = conn.prepareStatement(query1);
+				ps.setInt(1, id);
+				rs=ps.executeQuery();
+				RequestDispatcher rd = request.getRequestDispatcher("readSetupbox.jsp");
+				rd.include(request, response);
+				out.println("<center>Below are the setupbox details for id - "+id+"</center>");
+				while(rs.next())
+				{
+					
+					out.print("<div align=\"center\"><table border=\"1\"><tr><td>Setupbox id</td><td>"+rs.getInt(1)+"</td></tr>");
+					out.print("<tr><td>Setupbox Type</td><td>"+rs.getString(2)+"</td></tr>");
+					out.print("<tr><td>Length</td><td>"+rs.getInt(3)+"</td></tr>");
+					out.print("<tr><td>Breadth</td><td>"+rs.getInt(4)+"</td></tr>");
+					out.print("<tr><td>Weight</td><td>"+rs.getInt(5)+"</td></tr>");
+					out.print("<tr><td>Price</td><td>"+rs.getInt(6)+"</td></tr>");
+					out.print("<tr><td>Installation Charge</td><td>"+rs.getInt(7)+"</td></tr>");
+					out.print("<tr><td>Upgradation Charge</td><td>"+rs.getInt(8)+"</td></tr>");
+					out.print("<tr><td>Discount</td><td>"+rs.getInt(9)+"</td></tr>");
+					out.print("<tr><td>Billing Type</td><td>"+rs.getString(10)+"</td></tr>");
+					out.print("<tr><td>Refund</td><td>"+rs.getInt(11)+"</td></tr></table></div>");
+					out.print("<td><form action=\"DTHServlet\" method=\"get\"><input type=\"submit\" value=\"update\"><input type=\"hidden\" name=\"register\"value=\"update\"></form>");
+					//out.print("<form action=\"DTHServlet\" method=\"get\"><input type=\"submit\" value=\"delete\"><input type=\"hidden\" name=\"delete\"value="+rs.getInt(1)+"><input type=\"hidden\" name=\"register\"value=\"delete
+					
+				}
+				
+			}
+			//Basic selection
+			else if(hidden1.equals("select1"))
+			{
+				ps = conn.prepareStatement(query2);
+				rs=ps.executeQuery();
+				RequestDispatcher rd = request.getRequestDispatcher("readSetupbox.jsp");
+				rd.include(request, response);
+				out.println("<br><div align=\\\"center\\\"><table border=\\\"1\\\">");
+				out.println("<th>Setupbox id</th><th>Setupbox Type</th><th>Length</th><th>Breadth</th><th>Weight</th><th>Price</th><th>Installation Charge</th><th>Upgradation Charge</th><th>Discount</th><th>Billing Type</th><th>Refund</th><th>Action</th>");
+				while(rs.next())
+				{
+					
+					out.print("<tr><td>"+rs.getInt(1)+"</td>");
+					out.print("<td>"+rs.getString(2)+"</td>");
+					out.print("<td>"+rs.getInt(3)+"</td>");
+					out.print("<td>"+rs.getInt(4)+"</td>");
+					out.print("<td>"+rs.getInt(5)+"</td>");
+					out.print("<td>"+rs.getInt(6)+"</td>");
+					out.print("<td>"+rs.getInt(7)+"</td>");
+					out.print("<td>"+rs.getInt(8)+"</td>");
+					out.print("<td>"+rs.getInt(9)+"</td>");
+					out.print("<td>"+rs.getString(10)+"</td>");
+					out.print("<td>"+rs.getInt(11)+"</td></tr>");
+					
+					
+				}
+				out.print("</table><br></div>");
+			}
+			//Delete setupbox operation
+			else if(hidden1.equals("delete"))
+			{
+				ps = conn.prepareStatement(query2);
+				//ps.setInt(1, deleteid);
+				int i=ps.executeUpdate();
+				RequestDispatcher rd = request.getRequestDispatcher("readSetupbox.jsp");
+				rd.include(request, response);
+				out.print("Requested delete operation done.");
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+}

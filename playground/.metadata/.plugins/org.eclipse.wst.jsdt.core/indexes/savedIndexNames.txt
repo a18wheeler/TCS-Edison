@@ -1,0 +1,11 @@
+INDEX VERSION 1.4+C:\Users\user\Downloads\eclipse-jee-2019-06-R-win32-x86_64\eclipse\playground\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+1094464611.index
+2103359419.index
+763124198.index
+2150500990.index
+2834680733.index
+2706919410.index
+3188789706.index
+1982205118.index
+229920082.index
+2493535608.index

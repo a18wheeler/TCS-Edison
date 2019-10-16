@@ -1,0 +1,118 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class CRUD_SetTopBoxDet {
+	public static Connection con = null;
+	public static PreparedStatement pst = null;
+	public static ResultSet rs = null;
+
+	
+	public boolean create(String type,int id,double length,double breadth,double width,double price, double installationCharges, double upgradeCharge, double discount, String billingType, double refundableDeposit) throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		
+		
+		String query = "insert into STB values(?,?,?,?,?,?,?,?,?,?,?)";
+		//System.out.println(query);
+		pst = con.prepareStatement(query);
+		pst.setInt(1, id);
+		pst.setString(2, type);
+		pst.setDouble(3, length);
+		pst.setDouble(4, breadth);
+		pst.setDouble(5, width);
+		pst.setDouble(6, price);
+		pst.setDouble(7, installationCharges);
+		pst.setDouble(8, upgradeCharge);
+		pst.setDouble(9, discount);
+		pst.setString(10, billingType);
+		pst.setDouble(11, refundableDeposit);
+		int i= pst.executeUpdate();
+		if(i>0)
+			return true;
+		return false;
+		
+
+	}
+	
+	public ResultSet read(int idGiven) throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		String query ="select * from STB where BOXID= ?";
+		pst = con.prepareStatement(query);
+		pst.setInt(1,idGiven);
+		rs = pst.executeQuery();
+		return rs;
+	}
+	
+	public ResultSet readall() throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		String query ="select * from STB";
+		pst = con.prepareStatement(query);
+		rs = pst.executeQuery();
+		return rs;
+	}
+	
+	
+	public boolean delete(int idGiven) throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		String query = "delete from STB where BOXID=?";
+		pst = con.prepareStatement(query);
+		pst.setInt(1,idGiven);
+		int i = pst.executeUpdate();
+		if(i>0)
+			return true;
+		else
+			return false;
+	}
+	
+public String[] readCSVFile(String pathToFile) throws IOException {
+		
+		BufferedReader csvReader = new BufferedReader(new FileReader(pathToFile));
+		String row;
+		String[] dataV=null;
+		while ((row = csvReader.readLine()) != null) {
+			dataV = row.split(",");
+		}	
+		csvReader.close();		
+		if(dataV != null)
+			return dataV;
+		return null;
+	}
+
+public int addSTBinventory(String[] csvLine) {
+	
+   
+   
+   try{
+	   con = JDBC.getConnection();
+	      
+	      
+	      String query1 = "insert into STB_INVENTORY values(?,?,?,?,?,?,?,?)";
+	      pst = con.prepareStatement(query1);
+	      
+	      pst.setInt(1, Integer.parseInt(csvLine[0]));
+	      pst.setInt(2, Integer.parseInt(csvLine[1]));
+	      pst.setString(3, csvLine[2]);
+	      pst.setInt(4, Integer.parseInt(csvLine[3]));
+	      pst.setInt(5, Integer.parseInt(csvLine[4]));
+	      pst.setInt(6, Integer.parseInt(csvLine[5]));
+	      pst.setInt(7, Integer.parseInt(csvLine[6]));
+	      pst.setInt(8, Integer.parseInt(csvLine[7]));
+	      
+	  
+	      int i = pst.executeUpdate();
+	      System.out.println(i+ " rows inserted");
+	      return i;
+	      
+   }catch(Exception e) {
+	   e.printStackTrace();
+   }
+   return -1;
+}
+	
+	
+
+}

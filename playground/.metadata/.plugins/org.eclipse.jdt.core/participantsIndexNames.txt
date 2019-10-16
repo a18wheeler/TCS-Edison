@@ -1,0 +1,3 @@
+INDEX VERSION 1.131
+C:\Users\user\Downloads\eclipse-jee-2019-06-R-win32-x86_64\eclipse\playground\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2493535608.index
+\DTH1\src

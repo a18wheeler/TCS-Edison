@@ -1,0 +1,132 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body> 
+<div align="center">
+<form action="DTHServlet" method="get">
+<fieldset style="width:700px;height:550px">
+<table>
+<h3>Register Setup box</h3>
+<tr>
+<td>
+Setup boxtype
+</td>
+<td>
+<input type ="text" name="stype">
+</td>
+</tr>
+<tr>
+<td>
+Setup box id
+</td>
+<td>
+<input type ="text" name="id">
+</td>
+</tr>
+<tr>
+<td>
+Length
+</td>
+<td>
+<input type ="text" name="length">
+</td>
+</tr>
+<tr>
+<td>
+Breadth
+</td>
+<td>
+<input type ="text" name="breadth">
+</td>
+</tr>
+<tr>
+<td>
+Width
+</td>
+<td>
+<input type ="text" name="width">
+</td>
+</tr>
+<tr>
+<td>
+Price
+</td>
+<td>
+<input type ="text" name="price">
+</td>
+</tr>
+<tr>
+<td>
+Installation charges
+</td>
+<td>
+<input type ="text" name="icharge">
+</td>
+</tr>
+<tr>
+<td>
+Upgradation charge
+</td>
+<td>
+<input type ="text" name="ucharge">
+</td>
+</tr>
+<tr>
+<td>
+Discount
+</td>
+<td>
+<input type ="text" name="discount">
+</td>
+</tr>
+<tr>
+<td>
+Billing type
+</td>
+<td>
+<input type ="text" name="btype">
+</td>
+</tr>
+<tr>
+<td>
+Refund deposit
+</td>
+<td>
+<input type ="text" name="deposit">
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<input type ="submit" name="submit">
+<input type="hidden" name="register" value="create">
+<input type ="reset" name="reset">
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<a href="readSetupbox.jsp">Show set up box</a>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<a href="updateSetupbox.jsp">Update set up box</a>
+</td>
+</tr>
+<tr><td></td>
+<td>
+<a href="deleteSetupbox.jsp">Delete set up box</a></td>
+</table>
+</fieldset>
+</form>
+</div>
+</body>
+</html>

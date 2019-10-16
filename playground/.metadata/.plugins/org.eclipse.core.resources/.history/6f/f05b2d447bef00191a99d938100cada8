@@ -1,0 +1,151 @@
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class DTHServlet
+ */
+@WebServlet("/DTHServlet")
+public class DTHServlet extends HttpServlet {
+	static Connection conn;
+	static PreparedStatement ps;
+	String driverName="oracle.jdbc.driver.OracleDriver";
+	String DB_URL="jdbc:oracle:thin:@localhost:1521:xe";
+	String DB_USER="system";
+	String DB_PASS="12345";
+	ResultSet rs;
+	String query="insert into stb values(?,?,?,?,?,?,?,?,?,?,?)";
+	String query1="select * from stb where boxid=?";
+	String query2="select * from stb";
+	String query3="delete from stb where boxid=?";
+	CRUD_SetTopBoxDet ml=new CRUD_SetTopBoxDet();
+	
+   	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+   		try {
+			
+			PrintWriter out=response.getWriter();
+			String hidden1=request.getParameter("register");
+			String uname =  request.getParameter("myFile");
+			
+			
+			String  p= "C:\\Users\\user\\Downloads\\csv_sample.csv";
+			String[] csvLine = ml.readCSVFile(p);
+			System.out.println(csvLine);
+			ml.addSTBinventory(csvLine);
+			
+			
+			out.println(csvLine);
+			//Insertion operation
+			if(hidden1.equals("create"))
+			{
+				int id=Integer.parseInt(request.getParameter("id"));
+				String type=request.getParameter("stype");
+				float length=Float.parseFloat(request.getParameter("length"));
+				float breadth=Float.parseFloat(request.getParameter("breadth"));
+				float width=Float.parseFloat(request.getParameter("width"));
+				float price=Float.parseFloat(request.getParameter("price"));
+				float icharge=Float.parseFloat(request.getParameter("icharge"));
+				float ucharge=Float.parseFloat(request.getParameter("ucharge"));
+				float discount=Float.parseFloat(request.getParameter("discount"));
+				String btype=request.getParameter("btype");
+				float refund=Float.parseFloat(request.getParameter("deposit"));
+				if(ml.create(type,id,length,breadth,width,price,icharge,ucharge,discount,btype,refund))
+					out.println("Successfully created");
+				else
+					out.println("Not successfully created");
+			}
+			//Selecting by boxid
+			else if(hidden1.equals("select"))
+			{
+				int id=Integer.parseInt(request.getParameter("id"));
+				rs = ml.read(id);
+				RequestDispatcher rd = request.getRequestDispatcher("readSetupbox.jsp");
+				rd.include(request, response);
+				out.println("<center>Below are the setupbox details for id - "+id+"</center>");
+				while(rs.next())
+				{
+					
+					int id1=rs.getInt(1);
+					out.print("<div align=\"center\"><table border=\"1\"><tr><td>Setupbox id</td><td>"+rs.getInt(1)+"</td></tr>");
+					out.print("<tr><td>Setupbox Type</td><td>"+rs.getString(2)+"</td></tr>");
+					out.print("<tr><td>Length</td><td>"+rs.getInt(3)+"</td></tr>");
+					out.print("<tr><td>Breadth</td><td>"+rs.getInt(4)+"</td></tr>");
+					out.print("<tr><td>Weight</td><td>"+rs.getInt(5)+"</td></tr>");
+					out.print("<tr><td>Price</td><td>"+rs.getInt(6)+"</td></tr>");
+					out.print("<tr><td>Installation Charge</td><td>"+rs.getInt(7)+"</td></tr>");
+					out.print("<tr><td>Upgradation Charge</td><td>"+rs.getInt(8)+"</td></tr>");
+					out.print("<tr><td>Discount</td><td>"+rs.getInt(9)+"</td></tr>");
+					out.print("<tr><td>Billing Type</td><td>"+rs.getString(10)+"</td></tr>");
+					out.print("<tr><td>Refund</td><td>"+rs.getInt(11)+"</td></tr></table></div>");
+					
+					
+				}
+				
+				out.print("<div align=\"center\"><form action=\"DTHServlet\" method=\"get\"><input type=\"submit\" value=\"update\"><input type=\"hidden\" name=\"register\"value=\"update\"></form>");
+				out.print("<form action=\"DTHServlet\" method=\"get\"><input type=\"submit\" value=\"delete\"><input type=\"hidden\" name=\"delete\"value="+id+"><input type=\"hidden\" name=\"register\"value=\"delete\"></div>");
+				
+			}
+			//Basic selection
+			else if(hidden1.equals("select1"))
+			{
+				rs = ml.readall();
+				RequestDispatcher rd = request.getRequestDispatcher("readSetupbox.jsp");
+				
+				rd.include(request, response);
+				out.println("<br><div align=\\\"center\\\"><table border=\\\"1\\\">");
+				out.println("<th>Setupbox id</th><th>Setupbox Type</th><th>Length</th><th>Breadth</th><th>Weight</th><th>Price</th><th>Installation Charge</th><th>Upgradation Charge</th><th>Discount</th><th>Billing Type</th><th>Refund</th>");
+				while(rs.next())
+				{
+					
+					out.print("<tr><td>"+rs.getInt(1)+"</td>");
+					out.print("<td>"+rs.getString(2)+"</td>");
+					out.print("<td>"+rs.getInt(3)+"</td>");
+					out.print("<td>"+rs.getInt(4)+"</td>");
+					out.print("<td>"+rs.getInt(5)+"</td>");
+					out.print("<td>"+rs.getInt(6)+"</td>");
+					out.print("<td>"+rs.getInt(7)+"</td>");
+					out.print("<td>"+rs.getInt(8)+"</td>");
+					out.print("<td>"+rs.getInt(9)+"</td>");
+					out.print("<td>"+rs.getString(10)+"</td>");
+					out.print("<td>"+rs.getInt(11)+"</td></tr>");
+					
+					
+				}
+				out.print("</table><br></div>");
+			}
+			//Delete setupbox operation
+			else if(hidden1.equals("delete"))
+			{
+				int deleteid=Integer.parseInt(request.getParameter("delete"));
+				if(ml.delete(deleteid))
+					out.print("Requested delete operation done.");
+				else
+					out.print("Requested delete operation is not done.");
+				RequestDispatcher rd = request.getRequestDispatcher("readSetupbox.jsp");
+				rd.forward(request, response);
+				
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+   	
+	
+}

@@ -1,0 +1,98 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class CRUD_SetTopBoxDet {
+	public static Connection con = null;
+	public static PreparedStatement pst = null;
+	public static ResultSet rs = null;
+
+	
+	public boolean create(String type,int id,double length,double breadth,double width,double price, double installationCharges, double upgradeCharge, double discount, String billingType, double refundableDeposit) throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		
+		
+		String query = "insert into STB values(?,?,?,?,?,?,?,?,?,?,?)";
+		//System.out.println(query);
+		pst = con.prepareStatement(query);
+		pst.setInt(1, id);
+		pst.setString(2, type);
+		pst.setDouble(3, price);
+		pst.setDouble(4, installationCharges);
+		pst.setDouble(5, upgradeCharge);
+		pst.setDouble(6, discount);
+		pst.setString(7, billingType);
+		pst.setDouble(8, refundableDeposit);
+		pst.setDouble(9, length);
+		pst.setDouble(10, breadth);
+		pst.setDouble(11, width);
+		int i= pst.executeUpdate();
+		if(i>0)
+			return true;
+		return false;
+		
+
+	}
+	
+	public ResultSet read(int idGiven) throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		String query ="select * from STB where STB_ID= ?";
+		pst = con.prepareStatement(query);
+		pst.setInt(1,idGiven);
+		rs = pst.executeQuery();
+		return rs;
+	}
+	
+	public ResultSet readall() throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		String query ="select * from STB";
+		pst = con.prepareStatement(query);
+		rs = pst.executeQuery();
+		return rs;
+	}
+	
+	
+	public boolean delete(int idGiven) throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		String query = "delete from STB where STB_ID=?";
+		pst = con.prepareStatement(query);
+		pst.setInt(1,idGiven);
+		int i = pst.executeUpdate();
+		if(i>0)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean update(String type,int id,double length,double breadth,double width,double price, double installationCharges, double upgradeCharge, double discount, String billingType, double refundableDeposit) throws ClassNotFoundException, SQLException{
+		con = JDBC.getConnection();
+		
+		
+		String query = "update STB set stb_type=?,STB_PRICE=?,STB_INSTALLATION_CHARGE=?,STB_UPGRADATION_CHARGE=?,STB_DISCOUNT=?,STB_BILLING_TYPE=?,STB_REFUNDABLE_DEPOSITS=?,STB_LENGTH=?,STB_BREADTH=?,STB_HEIGHT=? where stb_id="+id+"";
+		//System.out.println(query);
+		pst = con.prepareStatement(query);
+		pst.setString(1, type);
+		pst.setDouble(2, price);
+		pst.setDouble(3, installationCharges);
+		pst.setDouble(4, upgradeCharge);
+		pst.setDouble(5, discount);
+		pst.setString(6, billingType);
+		pst.setDouble(7, refundableDeposit);
+		pst.setDouble(8, length);
+		pst.setDouble(9, breadth);
+		pst.setDouble(10, width);
+		int i= pst.executeUpdate();
+		if(i>0)
+			return true;
+		return false;
+		 
+		// TODO Auto-generated method stub
+		
+	}
+}
+	
+	
+	
+	
+	
